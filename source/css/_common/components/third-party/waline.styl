@@ -1,0 +1,259 @@
+#comments {
+  --waline-font-size: 1rem;
+  --waline-theme-color: var(--primary-color);
+  --waline-active-color: var(--color-aqua);
+  --waline-border: .0625rem solid var(--waline-border-color);
+  --waline-avatar-radius: 50%;
+  --waline-box-shadow: 0 .625rem 1.875rem -.9375rem var(--box-bg-shadow);
+
+  width: 100%;
+
+  &.wrap {
+    animation: none;
+    opacity: 0;
+  }
+
+  a {
+    color: var(--color-aqua);
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+
+  .wl-panel {
+    border-radius: .5rem;
+  }
+
+  .wl-editor {
+    min-height: 8.75rem;
+    line-height: 1.75;
+  }
+
+  .wl-btn {
+    border-radius: .3125rem;
+    transition: all .2s ease-in-out;
+  }
+
+  .wl-btn.primary {
+    border: none;
+    color: #fff;
+    background-image: linear-gradient(to right, var(--color-pink) 0, var(--color-orange) 100%);
+    box-shadow: 0 0 .75rem var(--color-pink-a3);
+  }
+
+  .wl-content {
+    word-wrap();
+  }
+
+  .wl-content img {
+    max-width: 100%;
+    border-radius: .3125rem;
+  }
+
+  +mobile() {
+    --waline-avatar-size: 2.5rem;
+    --waline-m-avatar-size: 2rem;
+
+    .wl-panel {
+      margin: .5rem 0;
+    }
+  }
+}
+
+/*
+ * Shoka 暗色模式。
+ * 使用明确色值，不依赖 Shoka 的 --grey-* 编号，
+ * 因为不同分支中的灰阶方向可能相反。
+ */
+html[data-theme="dark"] #comments,
+body[data-theme="dark"] #comments {
+  --waline-white: #000;
+  --waline-light-grey: #999;
+  --waline-dark-grey: #c7c7c7;
+
+  --waline-color: #c7c7c7;
+  --waline-bg-color: #1e1e1e;
+  --waline-bg-color-light: #272727;
+  --waline-bg-color-hover: #333;
+  --waline-border-color: #3a3a3a;
+
+  --waline-disable-bg-color: #333;
+  --waline-disable-color: #888;
+  --waline-code-bg-color: #282c34;
+  --waline-bq-color: #272727;
+  --waline-info-bg-color: #272727;
+  --waline-info-color: #aaa;
+
+  color: var(--waline-color);
+
+  .wl-panel,
+  .wl-header,
+  .wl-editor,
+  .wl-card,
+  .wl-empty,
+  .wl-power {
+    color: var(--waline-color);
+  }
+
+  .wl-panel {
+    background-color: var(--waline-bg-color) !important;
+    border-color: var(--waline-border-color);
+  }
+
+  .wl-header {
+    border-bottom-color: var(--waline-border-color);
+  }
+
+  .wl-header-item,
+  .wl-editor,
+  input,
+  textarea {
+    color: var(--waline-color) !important;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #888 !important;
+  }
+
+  .wl-card {
+    border-bottom-color: var(--waline-border-color);
+  }
+
+  .wl-meta > span {
+    color: #aaa;
+    background: var(--waline-info-bg-color);
+    border-color: var(--waline-border-color);
+  }
+
+  .wl-content,
+  .wl-content p {
+    color: #c7c7c7;
+  }
+
+  .wl-time,
+  .wl-like,
+  .wl-reply,
+  .wl-sort li,
+  .wl-empty,
+  .wl-power {
+    color: #999;
+  }
+}
+
+
+.waline-recent-comments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .waline-recent-comment-item {
+    padding: .75rem 0;
+    border-bottom: .0625rem dashed rgba(128, 128, 128, .35);
+  }
+
+  .waline-recent-comment-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      .waline-recent-comment-nick,
+      .waline-recent-comment-content {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .waline-recent-comment-header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .25rem;
+    line-height: 1.4;
+  }
+
+  .waline-recent-comment-nick {
+    color: var(--color-aqua);
+    font-weight: 600;
+  }
+
+  .waline-recent-comment-time {
+    color: #888;
+    font-size: .75rem;
+  }
+
+  .waline-recent-comment-content {
+    display: block;
+    overflow: hidden;
+    color: #aaa;
+    font-size: .875rem;
+    line-height: 1.6;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .waline-recent-comment-status {
+    padding: 1rem 0;
+    color: #888;
+  }
+}
+
+html[data-theme="dark"] .waline-recent-comments,
+body[data-theme="dark"] .waline-recent-comments {
+  .waline-recent-comment-content {
+    color: #aaa;
+  }
+
+  .waline-recent-comment-time,
+  .waline-recent-comment-status {
+    color: #888;
+  }
+}
+
+
+/* 修复 Shoka 页脚列表编号与最新评论内容重叠 */
+.waline-recent-comments {
+  counter-reset: none !important;
+  padding-left: 0 !important;
+  list-style: none !important;
+
+  > .waline-recent-comment-item {
+    position: relative;
+    margin: 0;
+    padding: .75rem 0 !important;
+    list-style: none !important;
+    text-indent: 0 !important;
+
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+      counter-increment: none !important;
+    }
+  }
+
+  .waline-recent-comment-header {
+    display: flex !important;
+    align-items: baseline;
+    column-gap: .5rem;
+    min-width: 0;
+  }
+
+  .waline-recent-comment-nick {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .waline-recent-comment-time {
+    flex: 0 0 auto;
+    margin-left: .125rem;
+    white-space: nowrap;
+  }
+
+  .waline-recent-comment-content {
+    padding-left: 0 !important;
+    text-indent: 0 !important;
+  }
+}

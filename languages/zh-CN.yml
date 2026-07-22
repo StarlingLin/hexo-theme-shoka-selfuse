@@ -1,15 +1,15 @@
 ---
 name: 简体中文
 favicon:
-  show: （●´3｀●）やれやれだぜ
-  hide: (´Д｀)大変だ！
+  show: 被发现啦！Σ(っ°Д°;)っ
+  hide: 我藏好啦！(つω⊂)
 
 title:
   archive: 归档
   category: 分类
   tag: 标签
   all: 全部
-  not_found: Σ( ° △ °|||)︴404！何も見えない
+  not_found: 页面找不到了！(；´д｀)ゞ
   category_in: 分类于"%s"的文章
   tag_in: 包含标签"%s"的文章
   archive_in: 发表于"%s"的文章
@@ -22,6 +22,8 @@ menu:
   tags: 标签
   about: 关于
   search: 搜索
+  links: CSDN
+  travellings: 开往
 
 sidebar:
   overview: 站点概览
@@ -60,6 +62,11 @@ footer:
   powered: "基于 %s"
   total_views: 总访问量
   total_visitors: 总访客量
+  timing: 本站已运行
+  days: 天
+  hours: 时
+  minutes: 分
+  seconds: 秒
 
 counter:
   index:

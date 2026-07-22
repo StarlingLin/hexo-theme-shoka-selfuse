@@ -23,9 +23,13 @@
 {%- endif %}
 
 {%- if theme.widgets.recent_comments %}
-<div>
+<div class="waline-recent-comments-widget">
   <h2>{{__('index.recent_comments')}}</h2>
-  <ul class="leancloud-recent-comment"></ul>
+  <ul
+    id="waline-recent-comments"
+    class="waline-recent-comments"
+    data-count="{{ theme.widgets.recent_comments_count or 5 }}">
+  </ul>
 </div>
 {%- endif %}
 {% endmacro %}

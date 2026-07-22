@@ -21,12 +21,15 @@ hexo.extend.generator.register('script', function(locals){
     darkmode: theme.darkmode,
     auto_scroll: theme.auto_scroll,
     js: {
-      valine: theme.vendors.js.valine,
+      waline: theme.vendors.js.waline,
       chart: theme.vendors.js.chart,
       copy_tex: theme.vendors.js.copy_tex,
-      fancybox: theme.vendors.js.fancybox
+      fancybox: theme.vendors.js.fancybox,
+      echarts: theme.vendors.js.echarts,
     },
     css: {
+      waline: theme.vendors.css.waline,
+      // Keep the legacy key because page.js lazily loads the theme override with vendorCss('valine').
       valine: theme.css + "/comment.css",
       katex: theme.vendors.css.katex,
       mermaid: theme.css + "/mermaid.css",
@@ -34,7 +37,7 @@ hexo.extend.generator.register('script', function(locals){
     },
     loader: theme.loader,
     search : null,
-    valine: theme.valine,
+    waline: theme.waline,
     quicklink: {
       timeout : theme.quicklink.timeout,
       priority: theme.quicklink.priority
@@ -70,7 +73,8 @@ hexo.extend.generator.register('script', function(locals){
   return {
       path: theme.js + '/app.js',
       data: function(){
-        return hexo.render.renderSync({text:  text, engine: 'js'});
+        // return hexo.render.renderSync({text:  text, engine: 'js'});
+        return ';(() => {\n' + hexo.render.renderSync({text: text, engine: 'js'}) + '\n})();';
       }
     };
 });

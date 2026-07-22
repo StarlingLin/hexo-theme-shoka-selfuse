@@ -1,3 +1,5 @@
+var walineInstance = null;
+
 const domInit = function() {
   $.each('.overview .menu > .item', function(el) {
     siteNav.child('.menu').appendChild(el.cloneNode(true));
@@ -35,6 +37,11 @@ const domInit = function() {
 const pjaxReload = function () {
   pagePosition()
 
+  if(walineInstance) {
+    walineInstance.destroy();
+    walineInstance = null;
+  }
+
   if(sideBar.hasClass('on')) {
     transition(sideBar, function () {
         sideBar.removeClass('on');
@@ -47,6 +54,110 @@ const pjaxReload = function () {
   pageScroll(0);
 }
 
+
+const loadRecentComments = function () {
+  var list = $('#waline-recent-comments');
+  if(!list || !CONFIG.waline || !CONFIG.waline.serverURL)
+    return;
+
+  var count = parseInt(list.attr('data-count') || 5);
+  var serverURL = CONFIG.waline.serverURL.replace(/\/+$/, '');
+  var requestURL = serverURL + '/api/comment?type=recent&count=' + count + '&lang=zh-CN';
+
+  list.innerHTML = '<li class="waline-recent-comment-status">加载中...</li>';
+
+  fetch(requestURL, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'omit'
+  })
+    .then(function(response) {
+      if(!response.ok)
+        throw new Error('HTTP ' + response.status);
+
+      return response.json();
+    })
+    .then(function(result) {
+      var comments = Array.isArray(result)
+        ? result
+        : (Array.isArray(result.data) ? result.data : []);
+
+      list.innerHTML = '';
+
+      if(!comments.length) {
+        list.innerHTML = '<li class="waline-recent-comment-status">暂无评论</li>';
+        return;
+      }
+
+      comments.forEach(function(item) {
+        var contentBox = document.createElement('div');
+        contentBox.innerHTML = item.comment || '';
+
+        var content = (contentBox.textContent || contentBox.innerText || '')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        if(content.length > 48)
+          content = content.substring(0, 48) + '…';
+
+        var root = CONFIG.root || '/';
+        root = root.replace(/\/?$/, '/');
+
+        var path = String(item.url || '').replace(/^\/+/, '');
+        var href = root + path + '#comments';
+
+        var li = document.createElement('li');
+        li.className = 'waline-recent-comment-item';
+
+        var link = document.createElement('a');
+        link.className = 'waline-recent-comment-link';
+        link.href = href;
+        link.title = (item.nick || '匿名') + '：' + content;
+
+        var header = document.createElement('span');
+        header.className = 'waline-recent-comment-header';
+
+        var nick = document.createElement('strong');
+        nick.className = 'waline-recent-comment-nick';
+        nick.textContent = item.nick || '匿名';
+
+        var time = document.createElement('time');
+        time.className = 'waline-recent-comment-time';
+
+        var date = item.time
+          ? new Date(item.time)
+          : (item.insertedAt ? new Date(item.insertedAt) : null);
+
+        if(date && !isNaN(date.getTime())) {
+          time.dateTime = date.toISOString();
+          time.textContent = date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          });
+        }
+
+        var body = document.createElement('span');
+        body.className = 'waline-recent-comment-content';
+        body.textContent = content || '[非文本评论]';
+
+        header.appendChild(nick);
+        if(time.textContent)
+          header.appendChild(time);
+
+        link.appendChild(header);
+        link.appendChild(body);
+        li.appendChild(link);
+        list.appendChild(li);
+      });
+    })
+    .catch(function(error) {
+      console.error('[Shoka Waline] Failed to load recent comments:', error);
+      list.innerHTML =
+        '<li class="waline-recent-comment-status">最新评论加载失败</li>';
+    });
+}
+
 const siteRefresh = function (reload) {
   LOCAL_HASH = 0
   LOCAL_URL = window.location.href
@@ -55,21 +166,33 @@ const siteRefresh = function (reload) {
   vendorJs('copy_tex');
   vendorCss('mermaid');
   vendorJs('chart');
-  vendorJs('valine', function() {
-    var options = Object.assign({}, CONFIG.valine);
-    options = Object.assign(options, LOCAL.valine||{});
-    options.el = '#comments';
-    options.pathname = LOCAL.path;
-    options.pjax = pjax;
-    options.lazyload = lazyload;
+  // Shoka still exposes the per-page switch as LOCAL.valine.
+  // Mirror it so vendorCss/vendorJs can use the Waline asset key.
+  LOCAL.waline = LOCAL.valine;
 
-    new MiniValine(options);
+  vendorCss('waline');
+  vendorJs('waline', function() {
+    var element = $('#comments');
+    if(!element)
+      return;
+
+    var options = Object.assign({}, CONFIG.waline);
+    options = Object.assign(options, LOCAL.valine || {});
+    options.el = '#comments';
+    options.path = LOCAL.path;
+
+    if(walineInstance) {
+      walineInstance.destroy();
+    }
+
+    walineInstance = Waline.init(options);
 
     setTimeout(function(){
       positionInit(1);
-      postFancybox('.v');
     }, 1000);
-  }, window.MiniValine);
+  }, window.Waline);
+
+  loadRecentComments();
 
   if(!reload) {
     $.each('script[data-pjax]', pjaxScript);

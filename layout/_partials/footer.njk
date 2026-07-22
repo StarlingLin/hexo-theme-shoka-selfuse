@@ -6,7 +6,25 @@
     <span class="with-love">
       <i class="ic i-{{ theme.footer.icon.name }}"></i>
     </span>
-    <span class="author" itemprop="copyrightHolder">{{ author }} @ {{ alternate if alternate else title}}</span>
+    <span class="author" itemprop="copyrightHolder">StarlingLin.top 版权所有</span>
+  </div>
+
+  <div class="timing">
+    <span id="RunTime"></span>
+    <script>
+      var BootDate = new Date("2023/10/20 07:46:34");
+      function ShowRunTime(id) {
+        var NowDate = new Date();
+        var RunDateM = parseInt(NowDate - BootDate);
+        var RunDays = Math.floor(RunDateM/(24*3600*1000));
+        var RunHours = Math.floor(RunDateM%(24*3600*1000)/(3600*1000));
+        var RunMinutes = Math.floor(RunDateM%(24*3600*1000)%(3600*1000)/(60*1000));
+        var RunSeconds = Math.round(RunDateM%(24*3600*1000)%(3600*1000)%(60*1000)/1000);
+        var RunTime = RunDays + " {{ __('footer.days') }} " + RunHours + " {{ __('footer.hours') }} " + RunMinutes + " {{ __('footer.minutes') }} " + RunSeconds + " {{ __('footer.seconds') }}";
+      document.getElementById(id).innerHTML = "{{ __('footer.timing') }} " + RunTime;
+      }
+      setInterval("ShowRunTime('RunTime')", 1000);
+    </script>
   </div>
 
   {%- if theme.footer.count %}
@@ -29,4 +47,13 @@
     {{ __('footer.powered', _url('https://hexo.io', 'Hexo') + ' & Theme.' + _url('https://github.com/amehime/hexo-theme-shoka', 'Shoka')) }}
   </div>
   {%- endif %}
+
+<div class="icp" style="display: flex; justify-content: center; padding-bottom: 20px;">
+  <p style="display: flex; align-items: center;">
+    <img src="/images/beian.png" width="20" style="margin-right: 5px;" />
+    <a href="https://beian.mps.gov.cn/#/query/webSearch?code=32011102010660" rel="noreferrer" target="_blank">苏公网安备32011102010660</a>
+    <a href="https://beian.miit.gov.cn" target="_blank" style="margin-left: 10px;">苏ICP备2024128760号-1</a>
+  </p>
+</div>
+
 </div>
