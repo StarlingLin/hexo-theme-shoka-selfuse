@@ -268,10 +268,63 @@ baidu_site_verification:
 baidu_push: false
 
 #! ---------------------------------------------------------------
-#! DO NOT EDIT THE FOLLOWING `vendors` SETTINGS
-#! UNLESS YOU KNOW WHAT YOU ARE DOING
-#! Script dependencies will be combined with jsDelivr (cdn.jsdelivr.net)
+#! Split core scripts so the browser can fetch them in parallel from a
+#! configurable CDN. Disable `advVendors` to fall back to Shoka's original
+#! jsDelivr combine request.
 #! ---------------------------------------------------------------
+advVendors:
+  enable: true
+  npm: https://unpkg.com/
+  github: https://cdn.jsdelivr.net/gh/
+  combine: https://cdn.jsdelivr.net/
+  preconnect:
+    - https://cdn.staticfile.net
+  js:
+    pace:
+      src: https://cdn.staticfile.net/pace/1.0.2/pace.min.js
+      defer: true
+      integrity: sha384-5DyzDgtTHw1bbnR1u2aQPxi5+e1KVPsygV5Pioo5W+5ua3sN5AHF05kzM0QfXXqm
+    pjax:
+      src: https://cdn.staticfile.net/pjax/0.2.8/pjax.min.js
+      defer: true
+      integrity: sha384-PX09VH9WyqnmDCYeEn/EPioJLSHIfqN8Z6j9jG19dDOMYisDt4wxZ0U/yGXbNo6h
+    fetch:
+      src: https://cdn.staticfile.net/fetch/3.4.0/fetch.min.js
+      defer: true
+      integrity: sha384-OR74H0hMrhtZTU4A+07hPxAOYzKGDS487pTnTKk6+giYQ+Buby/yTOlRyzHSfQ/+
+    anime:
+      src: https://cdn.staticfile.net/animejs/3.2.0/anime.min.js
+      defer: true
+      integrity: sha384-JmTzX6unfJDiDQMoiypqCUI502SrA0RB+F//kF3GrhGq5FRh2rTca4us326Qg7Dl
+    algolia:
+      src: https://cdn.staticfile.net/algoliasearch/4.12.1/algoliasearch-lite.umd.min.js
+      defer: true
+      integrity: sha384-ubF7ExR9Jzm4aPsY1+ZSPb1fInnnjkh0HPZjPIdXCx/ynvYh1T1ytIQrif9T5hnt
+    instantsearch:
+      src: https://cdn.staticfile.net/instantsearch.js/4.39.0/instantsearch.production.min.js
+      defer: true
+      integrity: sha384-OAgm4iI+xrbmRcICcMW/JyOXPBNfKiOSEhnGb0XyaGK75ADf4KGLKEAPIraIDPEU
+    lazyload:
+      src: https://cdn.staticfile.net/lozad.js/1.16.0/lozad.min.js
+      defer: true
+      integrity: sha384-cVYgPFZPhwM7B9xTuYXb1bcy5yui7JGXyRJYo2CCTHJT8FS9SDxDsQksUMrmFgwG
+    quicklink:
+      src: https://cdn.staticfile.net/quicklink/2.2.0/quicklink.umd.js
+      defer: true
+      integrity: sha384-TNJDSdqmJV17VmTae6yyCXIxv2+xWz0q/NgDSkHvjiP9O8BbAgljEy30hRi/8cAB
+
+vendorsList:
+  js:
+    # ECharts stays page-specific; source/about/index.md already loads it only where needed.
+    - pace
+    - pjax
+    - fetch
+    - anime
+    - algolia
+    - instantsearch
+    - lazyload
+    - quicklink
+
 vendors:
   css:
     waline: https://unpkg.com/@waline/client@3/dist/waline.css

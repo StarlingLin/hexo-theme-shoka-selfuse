@@ -61,6 +61,53 @@ hexo.extend.helper.register('_vendor_js', () => {
   return vendorJs ? htmlTag('script', { src: `//cdn.jsdelivr.net/combine/${vendorJs}` }, '') : '';
 });
 
+const resolveVendorUrl = function(source, config, context) {
+  if (/^(?:https?:)?\/\//.test(source)) return source;
+
+  const join = (base, path) => `${base.replace(/\/?$/, '/')}${path.replace(/^\/+/, '')}`;
+
+  if (source.startsWith('npm/')) {
+    return join(config.npm || '//cdn.jsdelivr.net/npm/', source.slice(4));
+  }
+  if (source.startsWith('gh/')) {
+    return join(config.github || '//cdn.jsdelivr.net/gh/', source.slice(3));
+  }
+  if (source.startsWith('combine/')) {
+    return join(config.combine || '//cdn.jsdelivr.net/', source);
+  }
+
+  return url_for.call(context, source);
+};
+
+hexo.extend.helper.register('_list_vendor_js', () => {
+  const config = hexo.theme.config.vendorsList;
+  return config && Array.isArray(config.js) ? config.js : [];
+});
+
+hexo.extend.helper.register('_adv_vendor_js', function(name) {
+  const config = hexo.theme.config.advVendors || {};
+  const entry = config.js && config.js[name];
+  if (!entry) return '';
+
+  const options = typeof entry === 'string' ? { src: entry } : entry;
+  if (!options.src) return '';
+
+  const attr = {
+    src: resolveVendorUrl(options.src, config, this)
+  };
+
+  if (options.defer) attr.defer = true;
+  if (options.async) attr.async = true;
+  if (options['data-pjax']) attr['data-pjax'] = true;
+  if (options.integrity) {
+    attr.integrity = options.integrity;
+    attr.crossorigin = options.crossorigin || 'anonymous';
+  }
+  if (options.referrerpolicy) attr.referrerpolicy = options.referrerpolicy;
+
+  return htmlTag('script', attr, '');
+});
+
 hexo.extend.helper.register('_css', function(...urls) {
   const { statics, css } = hexo.theme.config;
 
@@ -72,4 +119,13 @@ hexo.extend.helper.register('_js', function(...urls) {
   const { statics, js } = hexo.theme.config;
 
   return urls.map(url => htmlTag('script', { src: url_for.call(this, `${statics}${js}/${url}?v=${theme_env['version']}`) }, '')).join('');
+});
+
+hexo.extend.helper.register('_defer_js', function(...urls) {
+  const { statics, js } = hexo.theme.config;
+
+  return urls.map(url => htmlTag('script', {
+    src: url_for.call(this, `${statics}${js}/${url}?v=${theme_env['version']}`),
+    defer: true
+  }, '')).join('');
 });

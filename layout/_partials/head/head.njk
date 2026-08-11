@@ -40,6 +40,13 @@
 <link rel="alternate" type="application/atom+xml" title="{{config.title}}" href="{{ full_url_for('/atom.xml') }}" />
 <link rel="alternate" type="application/json" title="{{config.title}}" href="{{ full_url_for('/feed.json') }}" />
 
+{%- if theme.advVendors and theme.advVendors.enable and theme.advVendors.preconnect %}
+  {%- for origin in theme.advVendors.preconnect %}
+<link rel="dns-prefetch" href="{{ origin }}">
+<link rel="preconnect" href="{{ origin }}" crossorigin>
+  {%- endfor %}
+{%- endif %}
+
 {{ _vendor_font() }}
 
 {{ _css('app.css') }}
