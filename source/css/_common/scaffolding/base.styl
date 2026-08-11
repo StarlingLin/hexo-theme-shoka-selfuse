@@ -130,14 +130,17 @@ input, textarea {
   color: var(--text-color);
 }
 
+$iconfont_url = hexo-config('iconfont_url');
+$iconfont_url = '//at.alicdn.com/t/font_' + $iconfont unless $iconfont_url;
+
 @font-face {
   font-family: 'ic';
-  src: url('//at.alicdn.com/t/font_' + $iconfont + '.eot');
-  src: url('//at.alicdn.com/t/font_' + $iconfont + '.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_' + $iconfont + '.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_' + $iconfont + '.woff') format('woff'),
-  url('//at.alicdn.com/t/font_' + $iconfont + '.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_' + $iconfont + '.svg#ic') format('svg');
+  src: url($iconfont_url + '.eot');
+  src: url($iconfont_url + '.eot?#iefix') format('embedded-opentype'),
+  url($iconfont_url + '.woff2') format('woff2'),
+  url($iconfont_url + '.woff') format('woff'),
+  url($iconfont_url + '.ttf') format('truetype'),
+  url($iconfont_url + '.svg#ic') format('svg');
 }
 
 .ic {
