@@ -1,0 +1,56 @@
+{% extends '_partials/layout.njk' %}
+{% import '_macro/sidebar.njk' as sidebar with context %}
+
+{% block title %}{{ page.title }} |{% endblock %}
+
+{% block header %}
+  <h1 itemprop="name headline">{{ page.title }}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="moments wrap post block">
+  <div class="moments-timeline">
+    {%- if page.posts and page.posts.length %}
+      {%- for moment in page.posts %}
+      <article class="moment-card" style="animation-delay: {{ loop.index0 * 0.04 }}s">
+        <span class="moment-dot" aria-hidden="true"></span>
+        <header class="moment-header">
+          <time class="moment-date" datetime="{{ date_xml(moment.date) }}">
+            <i class="ic i-calendar" aria-hidden="true"></i>
+            {{ full_date(moment.date, 'YYYY年M月D日 HH:mm') }}
+          </time>
+        </header>
+
+        <div class="moment-body md">
+          {%- if moment.content %}
+          <div class="moment-text body">{{ moment.content }}</div>
+          {%- endif %}
+
+          {%- if moment.images and moment.images.length %}
+          <div class="moment-images{{ ' many' if moment.images.length > 6 }}" data-count="{{ moment.images.length }}">
+            {%- for image in moment.images %}
+            <div class="moment-image-wrapper">
+              <a class="moment-image-link fancybox" href="{{ url_for(image) }}" data-fancybox="{{ moment.id }}" aria-label="查看动态图片 {{ loop.index }}">
+                <img class="moment-image" data-src="{{ url_for(image) }}" alt="动态图片 {{ loop.index }}">
+              </a>
+            </div>
+            {%- endfor %}
+          </div>
+          {%- endif %}
+        </div>
+      </article>
+      {%- endfor %}
+    {%- else %}
+      <div class="moments-empty">
+        <i class="ic i-feather" aria-hidden="true"></i>
+        <p>暂时没有动态喵~</p>
+      </div>
+    {%- endif %}
+  </div>
+</div>
+{{ partial('_partials/pagination.njk') }}
+{% endblock %}
+
+{% block sidebar %}
+{{ sidebar.render(false) }}
+{% endblock %}

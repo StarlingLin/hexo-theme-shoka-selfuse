@@ -1,0 +1,224 @@
+.moments {
+  .moments-timeline {
+    position: relative;
+    padding: 1.25rem 1.25rem 1.25rem 2.75rem;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 1.5rem;
+      top: 1.25rem;
+      bottom: 1.25rem;
+      width: .125rem;
+      border-radius: .0625rem;
+      background: linear-gradient(to bottom, var(--color-pink), var(--color-orange));
+    }
+  }
+
+  .moment-card {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem 2rem;
+    border: .0625rem solid var(--grey-2);
+    border-radius: .75rem;
+    background: var(--grey-0);
+    box-shadow: 0 .625rem 1.875rem -.9375rem var(--box-bg-shadow);
+    opacity: 0;
+    animation: moment-slide-up .4s ease-out forwards;
+    the-transition(.3s);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      transform: translateX(.5rem);
+      box-shadow: 0 .75rem 2rem -.75rem var(--box-bg-shadow);
+    }
+  }
+
+  .moment-dot {
+    position: absolute;
+    left: -1.625rem;
+    top: 1.75rem;
+    z-index: $zindex-1;
+    width: .75rem;
+    height: .75rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-pink), var(--color-orange));
+    box-shadow: 0 0 0 .25rem var(--grey-0);
+  }
+
+  .moment-header {
+    margin-bottom: .75rem;
+  }
+
+  .moment-date {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    color: var(--grey-5);
+    font-size: $font-size-small;
+
+    .ic {
+      font-size: $font-size-smallest;
+    }
+  }
+
+  .moment-text {
+    font-family: $font-family-posts;
+    font-size: $font-size-medium;
+    line-height: 1.75;
+    white-space: normal;
+    word-wrap();
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    p {
+      margin: 0 0 .5rem;
+    }
+
+    a {
+      color: var(--color-pink);
+    }
+  }
+
+  .moment-images {
+    display: grid;
+    gap: .5rem;
+    width: 100%;
+    margin-top: 1rem;
+
+    &[data-count="1"] {
+      grid-template-columns: 1fr;
+      max-width: 24rem;
+    }
+
+    &[data-count="2"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &[data-count="3"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &[data-count="4"],
+    &[data-count="5"],
+    &[data-count="6"] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &.many {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .moment-image-wrapper {
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: .5rem;
+    background: var(--grey-2);
+  }
+
+  .moment-image-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 0;
+  }
+
+  .moment-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    object-fit: cover;
+    opacity: 1 !important;
+    the-transition(.3s);
+  }
+
+  .moment-image-wrapper:hover .moment-image {
+    transform: scale(1.05);
+  }
+
+  .moments-empty {
+    margin-left: -1.25rem;
+    padding: 3rem 2rem;
+    border: .0625rem solid var(--grey-2);
+    border-radius: .75rem;
+    background: var(--grey-0);
+    color: var(--grey-5);
+    text-align: center;
+
+    .ic {
+      margin-bottom: .5rem;
+      color: var(--color-pink);
+      font-size: 1.5rem;
+    }
+  }
+
+  +mobile() {
+    .moments-timeline {
+      padding: .75rem .25rem .75rem 1.75rem;
+
+      &::before {
+        left: .75rem;
+        top: .75rem;
+        bottom: .75rem;
+      }
+    }
+
+    .moment-card {
+      padding: 1.25rem;
+    }
+
+    .moment-dot {
+      left: -1.4rem;
+      top: 1.5rem;
+    }
+  }
+
+  +mobile-small() {
+    .moment-card {
+      padding: 1rem;
+
+      &:hover {
+        transform: none;
+      }
+    }
+
+    .moment-images {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+
+      &[data-count="1"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  }
+}
+
+@keyframes moment-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moments .moment-card {
+    opacity: 1;
+    animation: none;
+    transition: none;
+  }
+}

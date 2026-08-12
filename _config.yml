@@ -98,6 +98,7 @@ menu:
     archives: /archives/ || list-alt
     categories: /categories/ || th
     tags: /tags/ || tags
+  moments: /moments/ || smile
   friends: /friends/ || heart
   links: https://www.ciallo.org.cn || game
   travellings: https://www.travellings.cn/go.html || travelling
@@ -156,6 +157,12 @@ footer:
 post:
   # Dependencies: https://github.com/theme-next/hexo-symbols-count-time
   count: true
+
+# Moments / status updates from source/_moments/*.md
+moments:
+  title: 动态
+  description: 记录生活的基米
+  per_page: 10
 
 # Reward (Donate)
 reward:
