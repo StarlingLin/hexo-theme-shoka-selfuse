@@ -87,8 +87,8 @@ font:
 # project of https://www.iconfont.cn/
 # Legacy projects: //at.alicdn.com/t/font_<iconfont>.css
 # New projects can override the asset base URL (without the file extension).
-iconfont: "5222161_dxp3slftwu"
-iconfont_url: "//at.alicdn.com/t/c/font_5222161_dxp3slftwu"
+iconfont: "5222161_8l079jlll9n"
+iconfont_url: "//at.alicdn.com/t/c/font_5222161_8l079jlll9n"
 
 menu:
   home: / || home
@@ -101,6 +101,10 @@ menu:
   friends: /friends/ || heart
   links: https://www.ciallo.org.cn || game
   travellings: https://www.travellings.cn/go.html || travelling
+  contact:
+    default: / || comments
+    mail: mailto:2222040903@qq.com || envelope
+    chat: https://chat.starlinglin.top || paper-plane
 
 # Social Links
 # Usage: `Key: permalink || icon || color`
