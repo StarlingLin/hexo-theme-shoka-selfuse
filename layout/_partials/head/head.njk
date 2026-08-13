@@ -47,6 +47,8 @@
   {%- endfor %}
 {%- endif %}
 
-{{ _vendor_font() }}
+{%- if theme.font and theme.font.enable %}
+<link rel="stylesheet" href="{{ url_for('/css/fonts-subset.css') }}?v=__SHOKA_FONT_SUBSET_HASH__">
+{%- endif %}
 
 {{ _css('app.css') }}

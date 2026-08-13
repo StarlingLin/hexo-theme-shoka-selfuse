@@ -52,25 +52,25 @@ font:
 
   # Global font settings used for all elements inside <body>.
   global:
-    external: true
+    external: false
     family: Mulish
     size:
 
   # Font settings for alternate title.
   logo:
-    external: true
+    external: false
     family: Fredericka the Great
     size: 3.5
 
   # Font settings for site title.
   title:
-    external: true
+    external: false
     family: Noto Serif JP
     size: 2.5
 
   # Font settings for headlines (<h1> to <h6>).
   headings:
-    external: true
+    external: false
     family: Noto Serif SC
     size:
 
@@ -81,7 +81,7 @@ font:
 
   # Font settings for <code> and code blocks.
   codes:
-    external: true
+    external: false
     family: Inconsolata
 
 # project of https://www.iconfont.cn/
