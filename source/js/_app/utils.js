@@ -23,8 +23,7 @@ const getScript = function(url, callback, condition) {
   }
 }
 
-const assetUrl = function(asset, type) {
-  var str = CONFIG[asset][type]
+const resolveAssetUrl = function(str) {
   if(str.indexOf('npm')>-1||str.indexOf('gh')>-1||str.indexOf('combine')>-1)
     return "//cdn.jsdelivr.net/" + str
 
@@ -32,6 +31,10 @@ const assetUrl = function(asset, type) {
     return str
 
   return statics + str;
+}
+
+const assetUrl = function(asset, type) {
+  return resolveAssetUrl(CONFIG[asset][type]);
 }
 
 const vendorJs = function(type, callback, condition) {

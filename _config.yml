@@ -333,8 +333,6 @@ vendorsList:
     - pjax
     - fetch
     - anime
-    - algolia
-    - instantsearch
     - lazyload
     - quicklink
 

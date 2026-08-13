@@ -96,6 +96,8 @@ state:
 
 search:
   placeholder: 文章搜索
+  loading: 正在加载搜索组件…
+  error: 搜索组件加载失败，关闭后可重试
   empty: "关于 「 ${query} 」，什么也没搜到"
   stats: "${time} ms 内找到 ${hits} 条结果"
 

@@ -7,6 +7,18 @@ hexo.extend.generator.register('script', function(locals){
   const config = hexo.config;
   const theme = hexo.theme.config;
 
+  const getSearchVendor = function(name) {
+    const advanced = theme.advVendors && theme.advVendors.enable &&
+      theme.advVendors.js && theme.advVendors.js[name];
+
+    if(advanced) {
+      return typeof advanced === 'string' ? { src: advanced } : advanced;
+    }
+
+    const source = theme.vendors && theme.vendors.js && theme.vendors.js[name];
+    return source ? { src: source } : null;
+  };
+
   var env = require('../../package.json')
 
   var siteConfig = {
@@ -49,7 +61,11 @@ hexo.extend.generator.register('script', function(locals){
       appID    : config.algolia.appId,
       apiKey   : config.algolia.apiKey,
       indexName: config.algolia.indexName,
-      hits     : theme.search.hits
+      hits     : theme.search.hits,
+      assets   : {
+        algolia     : getSearchVendor('algolia'),
+        instantsearch: getSearchVendor('instantsearch')
+      }
     }
   }
 

@@ -441,12 +441,79 @@ const algoliaSearch = function(pjax) {
     });
   }
 
-  var search = instantsearch({
+  var searchReady = false;
+  var searchLoading = false;
+  var searchOpen = false;
+
+  const setSearchStatus = function(message) {
+    var container = $('.search-input-container');
+    container.innerHTML = '';
+
+    var input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'search-input';
+    input.placeholder = message;
+    input.disabled = true;
+    input.setAttribute('aria-label', message);
+    container.appendChild(input);
+  };
+
+  const focusSearch = function() {
+    var input = $('.search-input');
+    if(input && !input.disabled)
+      input.focus();
+  };
+
+  const loadSearchVendor = function(name, globalName, callback, failback) {
+    if(window[globalName]) {
+      callback();
+      return;
+    }
+
+    var asset = CONFIG.search.assets && CONFIG.search.assets[name];
+    if(!asset || !asset.src) {
+      failback();
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.src = resolveAssetUrl(asset.src);
+    script.async = true;
+    script.dataset.searchVendor = name;
+
+    if(asset.integrity) {
+      script.integrity = asset.integrity;
+      script.crossOrigin = asset.crossorigin || 'anonymous';
+    }
+    if(asset.referrerpolicy)
+      script.referrerPolicy = asset.referrerpolicy;
+
+    script.onload = function() {
+      script.onload = script.onerror = null;
+      if(window[globalName]) {
+        callback();
+      } else {
+        script.remove();
+        failback();
+      }
+    };
+    script.onerror = function() {
+      script.onload = script.onerror = null;
+      script.remove();
+      failback();
+    };
+    document.head.appendChild(script);
+  };
+
+  const initSearch = function() {
+    $('.search-input-container').innerHTML = '';
+
+    var search = instantsearch({
     indexName: CONFIG.search.indexName,
     searchClient  : algoliasearch(CONFIG.search.appID, CONFIG.search.apiKey),
     searchFunction: function(helper) {
       var searchInput = $('.search-input');
-      if (searchInput.value) {
+      if (searchInput && searchInput.value) {
         helper.search();
       }
     }
@@ -526,19 +593,45 @@ const algoliaSearch = function(pjax) {
   ]);
 
   search.start();
+    searchReady = true;
+    searchLoading = false;
+
+    if(searchOpen)
+      focusSearch();
+  };
+
+  const loadSearch = function() {
+    if(searchReady || searchLoading)
+      return;
+
+    searchLoading = true;
+    setSearchStatus(LOCAL.search.loading);
+
+    const onLoadFailed = function() {
+      searchLoading = false;
+      setSearchStatus(LOCAL.search.error);
+    };
+
+    loadSearchVendor('algolia', 'algoliasearch', function() {
+      loadSearchVendor('instantsearch', 'instantsearch', initSearch, onLoadFailed);
+    }, onLoadFailed);
+  };
 
   // Handle and trigger popup window
   $.each('.search', function(element) {
     element.addEventListener('click', function() {
+      searchOpen = true;
       document.body.style.overflow = 'hidden';
       transition(siteSearch, 'shrinkIn', function() {
-          $('.search-input').focus();
-        }) // transition.shrinkIn
+        focusSearch();
+      }) // transition.shrinkIn
+      loadSearch();
     });
   });
 
   // Monitor main search box
   const onPopupClose = function() {
+    searchOpen = false;
     document.body.style.overflow = '';
     transition(siteSearch, 0); // "transition.shrinkOut"
   };
