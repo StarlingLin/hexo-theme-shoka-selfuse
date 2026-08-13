@@ -46,7 +46,7 @@ hexo.extend.helper.register('_vendor_js', () => {
 
   //Get a font list from config
   // Search vendors are loaded only after the visitor opens the search panel.
-  let vendorJs = ['pace', 'pjax', 'fetch', 'anime', 'lazyload', 'quicklink', 'echarts'].map(item => {
+  let vendorJs = ['pace', 'pjax', 'anime', 'lazyload', 'quicklink', 'echarts'].map(item => {
     if (config[item]) {
       return config[item];
     }

@@ -144,9 +144,6 @@
   };
 </script>
 
-{# <script src="https://cdn.polyfill.io/v2/polyfill.js"></script> #}
-<script src="https://polyfill-fastly.io/v2/polyfill.js"></script>
-
 {%- if theme.advVendors and theme.advVendors.enable %}
   {%- for vendor in _list_vendor_js() %}
 {{ _adv_vendor_js(vendor) }}

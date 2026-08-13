@@ -166,31 +166,31 @@ const siteRefresh = function (reload) {
   vendorJs('copy_tex');
   vendorCss('mermaid');
   vendorJs('chart');
-  // Shoka still exposes the per-page switch as LOCAL.valine.
-  // Mirror it so vendorCss/vendorJs can use the Waline asset key.
-  LOCAL.waline = LOCAL.valine;
+  // The recent-comments widget uses Waline's lightweight HTTP API directly.
+  // Load the full client and stylesheet only on pages that render a comment box.
+  if($('#comments')) {
+    // Shoka still exposes the per-page switch as LOCAL.valine.
+    // Mirror it so vendorCss/vendorJs can use the Waline asset key.
+    LOCAL.waline = LOCAL.valine;
 
-  vendorCss('waline');
-  vendorJs('waline', function() {
-    var element = $('#comments');
-    if(!element)
-      return;
+    vendorCss('waline');
+    vendorJs('waline', function() {
+      var options = Object.assign({}, CONFIG.waline);
+      options = Object.assign(options, LOCAL.valine || {});
+      options.el = '#comments';
+      options.path = LOCAL.path;
 
-    var options = Object.assign({}, CONFIG.waline);
-    options = Object.assign(options, LOCAL.valine || {});
-    options.el = '#comments';
-    options.path = LOCAL.path;
+      if(walineInstance) {
+        walineInstance.destroy();
+      }
 
-    if(walineInstance) {
-      walineInstance.destroy();
-    }
+      walineInstance = Waline.init(options);
 
-    walineInstance = Waline.init(options);
-
-    setTimeout(function(){
-      positionInit(1);
-    }, 1000);
-  }, window.Waline);
+      setTimeout(function(){
+        positionInit(1);
+      }, 1000);
+    }, window.Waline);
+  }
 
   loadRecentComments();
 

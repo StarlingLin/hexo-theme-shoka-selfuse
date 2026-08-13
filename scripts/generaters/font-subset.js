@@ -8,7 +8,7 @@ const path = require('path');
 const { load } = require('cheerio');
 const subsetFont = require('subset-font');
 
-const SCRIPT_VERSION = 2;
+const SCRIPT_VERSION = 3;
 const HASH_TOKEN = '__SHOKA_FONT_SUBSET_HASH__';
 const CACHE_DIRECTORY = path.join(
   hexo.base_dir,
@@ -114,7 +114,9 @@ function appendText(characterSet, text) {
 function collectText(htmlBuffers) {
   const scopes = {
     global: new Set(SAFE_LATIN + SAFE_CJK_PUNCTUATION),
-    logo: new Set(SAFE_LATIN),
+    // The decorative logo font is expensive even with a general Latin subset.
+    // Collect only characters that actually appear in `.artboard` elements.
+    logo: new Set(),
     serif: new Set(SAFE_CJK_PUNCTUATION),
     code: new Set(SAFE_LATIN)
   };

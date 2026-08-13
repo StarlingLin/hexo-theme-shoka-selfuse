@@ -301,10 +301,6 @@ advVendors:
       src: https://cdn.staticfile.net/pjax/0.2.8/pjax.min.js
       defer: true
       integrity: sha384-PX09VH9WyqnmDCYeEn/EPioJLSHIfqN8Z6j9jG19dDOMYisDt4wxZ0U/yGXbNo6h
-    fetch:
-      src: https://cdn.staticfile.net/fetch/3.4.0/fetch.min.js
-      defer: true
-      integrity: sha384-OR74H0hMrhtZTU4A+07hPxAOYzKGDS487pTnTKk6+giYQ+Buby/yTOlRyzHSfQ/+
     anime:
       src: https://cdn.staticfile.net/animejs/3.2.0/anime.min.js
       defer: true
@@ -331,7 +327,6 @@ vendorsList:
     # ECharts stays page-specific; source/about/index.md already loads it only where needed.
     - pace
     - pjax
-    - fetch
     - anime
     - lazyload
     - quicklink
@@ -345,7 +340,6 @@ vendors:
   js:
     pace: npm/pace-js@1.0.2/pace.min.js
     pjax: npm/pjax@0.2.8/pjax.min.js
-    fetch: npm/whatwg-fetch@3.4.0/dist/fetch.umd.min.js
     anime: npm/animejs@3.2.0/lib/anime.min.js
     algolia: npm/algoliasearch@4/dist/algoliasearch-lite.umd.js
     instantsearch: npm/instantsearch.js@4/dist/instantsearch.production.min.js
