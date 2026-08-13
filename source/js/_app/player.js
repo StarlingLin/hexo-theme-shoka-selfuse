@@ -525,7 +525,7 @@ const mediaPlayer = function(t, config) {
     create: function () {
       var current = playlist.current()
 
-      this.el.innerHTML = '<div class="cover"><div class="disc"><img src="'+(current.cover)+'" class="blur" /></div></div>'
+      this.el.innerHTML = '<div class="cover"><div class="disc"><img src="'+(current.cover)+'" class="blur" width="500" height="500" /></div></div>'
       + '<div class="info"><h4 class="title">'+current.name+'</h4><span>'+current.artist+'</span>'
       + '<div class="lrc"></div></div>'
 
