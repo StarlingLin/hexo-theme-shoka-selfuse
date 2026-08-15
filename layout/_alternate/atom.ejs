@@ -26,6 +26,54 @@ const normalizeFeedCodeBlocks = (content = '') => content.replace(
     return `${captionHtml}<pre><code${languageClass}>${lines.join('\n')}</code></pre>`;
   }
 );
+
+const stripFeedKatexHtml = (content = '') => {
+  const marker = '<span class="katex-html"';
+  const spanTag = /<\/?span\b[^>]*>/gi;
+  let result = '';
+  let cursor = 0;
+
+  while (cursor < content.length) {
+    const start = content.indexOf(marker, cursor);
+    if (start === -1) {
+      result += content.slice(cursor);
+      break;
+    }
+
+    result += content.slice(cursor, start);
+
+    const openingTagEnd = content.indexOf('>', start);
+    if (openingTagEnd === -1) {
+      result += content.slice(start);
+      break;
+    }
+
+    let depth = 1;
+    spanTag.lastIndex = openingTagEnd + 1;
+    let match;
+
+    while (depth > 0 && (match = spanTag.exec(content))) {
+      if (match[0].startsWith('</')) {
+        depth -= 1;
+      } else if (!match[0].endsWith('/>')) {
+        depth += 1;
+      }
+    }
+
+    if (depth > 0) {
+      result += content.slice(start);
+      break;
+    }
+
+    cursor = spanTag.lastIndex;
+  }
+
+  return result;
+};
+
+const normalizeFeedContent = (content = '') => stripFeedKatexHtml(
+  normalizeFeedCodeBlocks(content)
+);
 %><?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id><%= config.url %></id>
@@ -45,7 +93,7 @@ const normalizeFeedCodeBlocks = (content = '') => content.replace(
         <id><%= post.permalink %></id>
         <title><%= post.title %></title>
         <link rel="alternate" href="<%= post.permalink %>"/>
-        <content type="html"><%= normalizeFeedCodeBlocks(post.content) %></content>
+        <content type="html"><%= normalizeFeedContent(post.content) %></content>
         <%_ for (const { name, path } of (post.categories ? post.categories.toArray() : [])) { _%>
         <category term="<%= name %>" scheme="<%= full_url_for(path) %>" />
         <%_ } _%>
