@@ -17,7 +17,7 @@ images: images
 favicon:
   apple_touch_icon: /apple-touch-icon.png
   #safari_pinned_tab: /logo.svg
-  #android_manifest: /manifest.json
+  android_manifest: /site.webmanifest
   #ms_browserconfig: /browserconfig.xml
 
 # Dark Mode
