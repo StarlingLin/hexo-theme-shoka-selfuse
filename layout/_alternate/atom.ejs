@@ -1,4 +1,32 @@
-<?xml version="1.0"?>
+<%
+const normalizeFeedCodeBlocks = (content = '') => content.replace(
+  /<figure class="highlight(?:\s+([^"]+))?">([\s\S]*?)<\/figure>/gi,
+  (figure, language, body) => {
+    const captionMatch = body.match(/<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>/i);
+    const caption = captionMatch
+      ? captionMatch[1].replace(/<[^>]+>/g, '').trim()
+      : '';
+    const lines = [];
+
+    body.replace(/<pre>([\s\S]*?)<\/pre>/gi, (pre, line) => {
+      lines.push(line);
+      return pre;
+    });
+
+    if (!lines.length) return figure;
+
+    const safeLanguage = String(language || '')
+      .split(/\s+/)[0]
+      .replace(/[^\w-]/g, '');
+    const languageClass = safeLanguage
+      ? ` class="language-${safeLanguage}"`
+      : '';
+    const captionHtml = caption ? `<p><em>${caption}</em></p>` : '';
+
+    return `${captionHtml}<pre><code${languageClass}>${lines.join('\n')}</code></pre>`;
+  }
+);
+%><?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id><%= config.url %></id>
     <title><%= config.title %></title>
@@ -17,7 +45,7 @@
         <id><%= post.permalink %></id>
         <title><%= post.title %></title>
         <link rel="alternate" href="<%= post.permalink %>"/>
-        <content type="html"><%= post.content %></content>
+        <content type="html"><%= normalizeFeedCodeBlocks(post.content) %></content>
         <%_ for (const { name, path } of (post.categories ? post.categories.toArray() : [])) { _%>
         <category term="<%= name %>" scheme="<%= full_url_for(path) %>" />
         <%_ } _%>
