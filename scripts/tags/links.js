@@ -22,6 +22,7 @@ const url = require('url');
 
 function linkGrid(args, content) {
   const theme = hexo.theme.config;
+  const safegoEnabled = hexo.config.hexo_safego?.general?.enable === true;
 
   if(!args[0] && !content) {
     return
@@ -65,7 +66,7 @@ function linkGrid(args, content) {
 
     result += `<div class="item" title="${item.owner || item.site}"${item.color}>`;
 
-    if (urlparam.protocol && urlparam.hostname !== siteHost) {
+    if (theme.exturl && !safegoEnabled && urlparam.protocol && urlparam.hostname !== siteHost) {
       var durl = Buffer.from(item.url).toString('base64');
       result += `<span class="exturl image" data-url="${durl}" data-background-image="${item_image}"></span>
           <div class="info">

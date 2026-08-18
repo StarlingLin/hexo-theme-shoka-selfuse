@@ -8,6 +8,11 @@ hexo.extend.filter.register('after_post_render', data => {
 
   data.content = data.content.replace(/(<img[^>]*) src=/img, '$1 data-src=');
 
+  // Keep normal external anchors for SafeGo; Shoka still handles external
+  // links outside the configured SafeGo content containers.
+  const safegoEnabled = hexo.config.hexo_safego?.general?.enable === true;
+  if (!theme.exturl || safegoEnabled) return;
+
   const url = require('url');
   const siteHost = url.parse(config.url).hostname || config.url;
   data.content = data.content.replace(/<a[^>]* href="([^"]+)"[^>]*>([^<]*)<\/a>/img, (match, href, html) => {
