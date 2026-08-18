@@ -87,8 +87,8 @@ font:
 # project of https://www.iconfont.cn/
 # Legacy projects: //at.alicdn.com/t/font_<iconfont>.css
 # New projects can override the asset base URL (without the file extension).
-iconfont: "5222161_8l079jlll9n"
-iconfont_url: "//at.alicdn.com/t/c/font_5222161_8l079jlll9n"
+iconfont: "5222161_rvblf1sgro"
+iconfont_url: "//at.alicdn.com/t/c/font_5222161_rvblf1sgro"
 
 menu:
   home: / || home
@@ -104,6 +104,7 @@ menu:
   travellings: https://www.travellings.cn/go.html || travelling
   contact:
     default: / || comments
+    board: https://comment.starlinglin.top || list-alt
     mail: mailto:2222040903@qq.com || envelope
     chat: https://chat.starlinglin.top || paper-plane
 
@@ -120,6 +121,7 @@ social:
   music: https://music.163.com/#/user/home?id=3246882964 || cloud-music || "#e60026"
   #weibo: https://weibo.com/yourname || weibo || "#ea716e"
   #about: https://about.me/StarlingLin || address-card || "#3b5998"
+  steam: https://steamcommunity.com/id/StarlingLin/ || steam || "#66c0f4"
   email: https://chat.starlinglin.top || envelope || "#55acd5"
   #facebook: https://www.facebook.com/yourname || facebook
   #stackoverflow: https://stackoverflow.com/yourname || stack-overflow
