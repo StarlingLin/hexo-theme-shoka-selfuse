@@ -229,6 +229,10 @@ const siteInit = function () {
   domInit()
 
   pjax = new Pjax({
+            // SafeGo turns external URLs into same-origin /go.html links.
+            // Never let PJAX consume links meant for a new tab or explicitly
+            // marked for a full browser navigation.
+            elements: 'a[href]:not([target="_blank"]):not([data-pjax-ignore]), form[action]',
             selectors: [
               'head title',
               '.languages',
