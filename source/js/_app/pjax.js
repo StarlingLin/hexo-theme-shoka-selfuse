@@ -229,6 +229,7 @@ const siteRefresh = function (reload) {
 const siteInit = function () {
 
   domInit()
+  contextMenuInit()
 
   pjax = new Pjax({
             // SafeGo turns external URLs into same-origin /go.html links.
