@@ -430,6 +430,127 @@ const loadComments = function () {
   }
 }
 
+const destroyStatisticsCharts = function () {
+  var manager = window.ShokaStatisticsCharts;
+  if(manager && typeof manager.destroy === 'function')
+    manager.destroy();
+
+  if(window.statisticsThemeObserver) {
+    window.statisticsThemeObserver.disconnect();
+    window.statisticsThemeObserver = null;
+  }
+
+  document.querySelectorAll('script[type="text/x-shoka-statistics"]').forEach(function(script) {
+    delete script.dataset.executed;
+  });
+
+  ['postsCalendar', 'postsChart', 'creationClockChart', 'articleSizeChart', 'tagsChart', 'categoriesChart', 'categoryTagSunburstChart'].forEach(function(name) {
+    window[name] = undefined;
+  });
+  window.ShokaStatisticsCharts = null;
+}
+
+const mountStatisticsCharts = function () {
+  var scripts = Array.prototype.slice.call(
+    document.querySelectorAll('script[type="text/x-shoka-statistics"]')
+  );
+  if(!scripts.length || !CONFIG.js.echarts)
+    return;
+
+  var initialize = function () {
+    if(!window.echarts)
+      return;
+
+    destroyStatisticsCharts();
+
+    var chartEntries = [];
+    var resizeTimer = null;
+    var lazyObserver = null;
+    var resizeHandler = function () {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(function () {
+        chartEntries.forEach(function(entry) {
+          if(entry.chart && !entry.chart.isDisposed())
+            (entry.resize || function () { entry.chart.resize(); })();
+        });
+      }, 120);
+    }
+
+    window.ShokaStatisticsCharts = {
+      register: function(chart, resize) {
+        if(chart)
+          chartEntries.push({ chart: chart, resize: resize });
+      },
+      setObserver: function(observer) {
+        lazyObserver = observer;
+      },
+      destroy: function() {
+        window.clearTimeout(resizeTimer);
+        window.removeEventListener('resize', resizeHandler);
+        if(lazyObserver)
+          lazyObserver.disconnect();
+        chartEntries.forEach(function(entry) {
+          if(entry.chart && !entry.chart.isDisposed())
+            entry.chart.dispose();
+        });
+        chartEntries = [];
+      }
+    };
+    window.addEventListener('resize', resizeHandler);
+
+    var execute = function(script) {
+      if(!script || script.dataset.executed === 'true')
+        return;
+      script.dataset.executed = 'true';
+      var runtime = document.createElement('script');
+      runtime.dataset.statisticsRuntime = '';
+      runtime.textContent = script.textContent;
+      document.body.appendChild(runtime);
+      document.body.removeChild(runtime);
+    }
+
+    execute(document.getElementById('statisticsThemeRuntime'));
+
+    var targetByScript = {
+      postsCalendar: 'posts-calendar',
+      postsChart: 'posts-chart',
+      creationClockChart: 'creation-clock-chart',
+      articleSizeChart: 'article-size-chart',
+      tagsChart: 'tags-chart',
+      categoriesChart: 'categories-chart',
+      categoryTagSunburstChart: 'category-tag-sunburst'
+    };
+    var chartScripts = scripts.filter(function(script) {
+      return targetByScript[script.id];
+    });
+
+    if(!window.IntersectionObserver) {
+      chartScripts.forEach(execute);
+      return;
+    }
+
+    lazyObserver = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if(!entry.isIntersecting && entry.intersectionRatio <= 0)
+          return;
+        execute(document.getElementById(entry.target.dataset.statisticsScript));
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '280px 0px' });
+
+    chartScripts.forEach(function(script) {
+      var target = document.getElementById(targetByScript[script.id]);
+      if(!target)
+        return;
+      target.dataset.statisticsScript = script.id;
+      lazyObserver.observe(target);
+    });
+    window.ShokaStatisticsCharts.setObserver(lazyObserver);
+  }
+
+  getScript(assetUrl('js', 'echarts'), initialize, window.echarts);
+}
+
 const algoliaSearch = function(pjax) {
   if(CONFIG.search === null)
     return

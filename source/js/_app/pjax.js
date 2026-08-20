@@ -36,6 +36,7 @@ const domInit = function() {
 
 const pjaxReload = function () {
   pagePosition()
+  destroyStatisticsCharts()
 
   if(walineInstance) {
     walineInstance.destroy();
@@ -209,6 +210,7 @@ const siteRefresh = function (reload) {
 
   registerExtURL()
   postBeauty()
+  mountStatisticsCharts()
   tabFormat()
 
   toolPlayer.player.load(LOCAL.audio || CONFIG.audio || {})

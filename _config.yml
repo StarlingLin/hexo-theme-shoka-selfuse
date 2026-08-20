@@ -92,7 +92,11 @@ iconfont_url: "//at.alicdn.com/t/c/font_5222161_rvblf1sgro"
 
 menu:
   home: / || home
-  about: /about/ || user
+  about:
+    default: / || info-circle
+    aboutme: /about/me/ || user
+    aboutsite: /about/site/ || sitemap
+    statistics: /about/statistics/ || chart-area
   posts:
     default: / || feather
     archives: /archives/ || list-alt
@@ -351,4 +355,4 @@ vendors:
     waline: https://unpkg.com/@waline/client@3/dist/waline.umd.js
     copy_tex: npm/katex@0.12.0/dist/contrib/copy-tex.min.js
     chart: npm/frappe-charts@1.5.0/dist/frappe-charts.min.iife.min.js
-    echarts: npm/echarts@5.2.2/dist/echarts.min.js
+    echarts: npm/echarts@6.1.0/dist/echarts.min.js
