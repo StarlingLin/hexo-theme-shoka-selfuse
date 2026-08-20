@@ -19,7 +19,8 @@ const contextMenuIcons = {
 var contextMenuElement = null;
 var contextMenuState = {
   link: null,
-  selection: ''
+  selection: '',
+  point: null
 };
 
 const contextMenuRootUrl = function(path) {
@@ -36,6 +37,7 @@ const contextMenuClose = function() {
   contextMenuElement.hidden = true;
   contextMenuState.link = null;
   contextMenuState.selection = '';
+  contextMenuState.point = null;
 }
 
 const contextMenuCopy = function(text, message) {
@@ -107,6 +109,7 @@ const contextMenuOpen = function(event) {
     y = activeRect.bottom;
   }
 
+  contextMenuState.point = { x: x, y: y };
   contextMenuPosition(x, y);
   window.requestAnimationFrame(function() {
     contextMenuElement.classList.add('is-visible');
@@ -169,6 +172,11 @@ const contextMenuAction = function(event) {
       contextMenuClose();
       window.print();
       break;
+    case 'font-bomb':
+      var bombPoint = contextMenuState.point;
+      contextMenuClose();
+      fontBombStart(bombPoint);
+      break;
   }
 }
 
@@ -201,6 +209,7 @@ const contextMenuInit = function() {
       '<a class="context-menu-item" data-action="tags" href="' + contextMenuRootUrl('tags/') + '" role="menuitem">' + contextMenuIcons.tag + '<span>文章标签</span></a>' +
       '<button type="button" class="context-menu-item" data-action="comments" role="menuitem">' + contextMenuIcons.comment + '<span>看评论区</span></button>' +
       '<button type="button" class="context-menu-item" data-action="print" role="menuitem">' + contextMenuIcons.print + '<span>打印页面</span></button>' +
+      '<button type="button" class="context-menu-item context-menu-bomb" data-action="font-bomb" role="menuitem"><span class="context-menu-emoji" aria-hidden="true">💣</span><span>蹦蹦炸弹</span></button>' +
     '</div>';
 
   BODY.appendChild(contextMenuElement);
@@ -222,4 +231,5 @@ const contextMenuInit = function() {
   window.addEventListener('resize', contextMenuClose);
   window.addEventListener('blur', contextMenuClose);
   window.addEventListener('pjax:send', contextMenuClose);
+  window.addEventListener('pjax:send', fontBombCleanup);
 }

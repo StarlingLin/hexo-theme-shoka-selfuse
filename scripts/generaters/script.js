@@ -75,7 +75,7 @@ hexo.extend.generator.register('script', function(locals){
 
   var text = '';
 
-  ['utils', 'dom', 'player', 'global', 'context-menu', 'sidebar', 'page', 'pjax'].forEach(function(item) {
+  ['utils', 'dom', 'player', 'global', 'font-bomb', 'context-menu', 'sidebar', 'page', 'pjax'].forEach(function(item) {
     text += fs.readFileSync('themes/shoka/source/js/_app/'+item+'.js').toString();
   });
 

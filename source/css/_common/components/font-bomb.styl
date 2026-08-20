@@ -1,0 +1,151 @@
+.font-bomb-marker {
+  position: fixed;
+  z-index: $zindex-5 + 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: #fff;
+  background: radial-gradient(circle at 35% 30%, #666 0, #222 42%, #090909 75%);
+  border: .125rem solid rgba(255, 255, 255, .65);
+  border-radius: 50%;
+  box-shadow: 0 0 0 .25rem rgba(233, 84, 107, .22), 0 .4rem 1.2rem rgba(0, 0, 0, .42);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: font-bomb-plant .22s ease-out forwards, font-bomb-tick .48s .22s ease-in-out infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: .8rem;
+    height: .35rem;
+    top: -.4rem;
+    right: .25rem;
+    background: var(--color-orange);
+    border-radius: .2rem;
+    transform: rotate(38deg);
+    box-shadow: .35rem -.15rem 0 -.08rem var(--color-yellow);
+  }
+
+  &.is-exploding {
+    width: 4rem;
+    height: 4rem;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    font-size: 3rem;
+    animation: font-bomb-flash .7s ease-out forwards;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+.font-bomb-text {
+  position: relative;
+}
+
+.font-bomb-particle {
+  position: relative;
+  display: inline-block;
+  will-change: transform, opacity, filter;
+
+  &.is-exploding {
+    z-index: $zindex-5 + 8;
+    pointer-events: none;
+    animation: font-bomb-particle 1.35s cubic-bezier(.12, .48, .23, 1) var(--font-bomb-delay, 0s) forwards;
+  }
+}
+
+.font-bomb-spark {
+  position: absolute;
+  width: .38rem;
+  height: .38rem;
+  left: 50%;
+  top: 50%;
+  background: var(--color-yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 .55rem var(--color-orange);
+  opacity: 0;
+  animation: font-bomb-spark .55s ease-out var(--font-bomb-spark-delay, 0s) forwards;
+}
+
+@keyframes font-bomb-plant {
+  from {
+    transform: translate(-50%, -50%) scale(0) rotate(-25deg);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+}
+
+@keyframes font-bomb-tick {
+  0%, 100% {
+    box-shadow: 0 0 0 .2rem rgba(233, 84, 107, .16), 0 .4rem 1.2rem rgba(0, 0, 0, .42);
+  }
+  50% {
+    box-shadow: 0 0 0 .55rem rgba(233, 84, 107, .32), 0 .4rem 1.2rem rgba(0, 0, 0, .42);
+  }
+}
+
+@keyframes font-bomb-flash {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(.45);
+    filter: brightness(2);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.35);
+    filter: brightness(1.25);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.8);
+    filter: brightness(1);
+  }
+}
+
+@keyframes font-bomb-particle {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0);
+    filter: blur(0);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(var(--font-bomb-x-mid), var(--font-bomb-y-mid)) rotate(var(--font-bomb-r-mid));
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--font-bomb-x-end), var(--font-bomb-y-end)) rotate(var(--font-bomb-r-end));
+    filter: blur(.04rem);
+  }
+}
+
+@keyframes font-bomb-spark {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--font-bomb-spark-x)), calc(-50% + var(--font-bomb-spark-y))) scale(.25);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .font-bomb-marker {
+    animation: font-bomb-plant .01s forwards;
+  }
+
+  .font-bomb-particle.is-exploding {
+    animation-duration: .45s;
+  }
+}

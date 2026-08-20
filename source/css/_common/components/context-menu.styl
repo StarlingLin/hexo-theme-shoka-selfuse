@@ -48,6 +48,15 @@
     stroke-linejoin: round;
   }
 
+  .context-menu-emoji {
+    width: 1.375rem;
+    flex: 0 0 1.375rem;
+    font-size: 1.25rem;
+    line-height: 1;
+    text-align: center;
+    filter: grayscale(.15);
+  }
+
   button,
   a {
     -webkit-tap-highlight-color: transparent;
@@ -143,6 +152,14 @@
 
   &[hidden] {
     display: none !important;
+  }
+}
+
+.context-menu-bomb {
+  &:hover,
+  &:focus-visible {
+    color: var(--color-orange);
+    background: rgba(236, 140, 105, .12);
   }
 }
 
