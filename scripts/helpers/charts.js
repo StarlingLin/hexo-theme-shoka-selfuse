@@ -42,6 +42,28 @@ function collectionNames (collection) {
   return names
 }
 
+function leafCategoryItems (collection) {
+  const categories = []
+  if (!collection || typeof collection.forEach !== 'function') return categories
+  collection.forEach(function (category) {
+    if (category && category.name) categories.push(category)
+  })
+
+  const parentIds = new Set()
+  categories.forEach(function (category) {
+    if (category.parent) parentIds.add(String(category.parent))
+  })
+
+  return categories.filter(function (category) {
+    return !parentIds.has(String(category._id))
+  })
+}
+
+function categoryPath (category) {
+  if (category && category.path) return String(category.path)
+  return 'categories/' + encodeURIComponent(String(category.name)) + '/'
+}
+
 function postsCalendar () {
   const dateMap = new Map()
   const yearMap = new Map()
@@ -77,17 +99,17 @@ function postsCalendar () {
   var postsCalendarRoot = document.documentElement
 
   function postsCalendarTheme () {
-    var dark = postsCalendarRoot.hasAttribute('data-theme')
+    var dark = postsCalendarRoot.getAttribute('data-theme') === 'dark'
     var text = window.getComputedStyle(document.body).color || (dark ? '#f5f5f5' : '#333')
-    var axis = window.getComputedStyle(postsCalendarRoot).getPropertyValue('--grey-4').trim() || text
+    var axis = dark ? 'rgba(255,220,212,.13)' : 'rgba(191,145,132,.2)'
     return {
       dark: dark,
       text: text,
       axis: axis,
-      background: window.getComputedStyle(postsCalendarRoot).getPropertyValue('--grey-0').trim() || (dark ? '#252733' : '#fff'),
+      background: dark ? '#30313a' : '#fffaf8',
       heat: dark
-        ? ['#343744', '#685279', '#9a5ca8', '#cb62bd', '#ff78ce']
-        : ['#f0eef4', '#e8c6f1', '#d18be2', '#ab66ff', '#7140a5']
+        ? ['#343238', '#69444a', '#9d515c', '#cc5e6f', '#ed7b8e']
+        : ['#f7eeee', '#f2d5d7', '#eba9af', '#e57c89', '#d95269']
     }
   }
 
@@ -138,7 +160,7 @@ function postsCalendar () {
         borderWidth: 0,
         textStyle: { color: '#fff' },
         formatter: function (params) {
-          return '<span style="color:#d7c2e8">' + params.value[0] + '</span>　<strong style="color:#f0c9ff">' + params.value[1] + '</strong> 篇'
+          return '<span style="color:#ead0cc">' + params.value[0] + '</span>　<strong style="color:#ffb5aa">' + params.value[1] + '</strong> 篇'
         }
       },
       visualMap: {
@@ -172,7 +194,7 @@ function postsCalendar () {
         type: 'heatmap',
         coordinateSystem: 'calendar',
         data: yearData,
-        emphasis: { itemStyle: { shadowBlur: 9, shadowColor: 'rgba(171,102,255,.55)' } }
+        emphasis: { itemStyle: { shadowBlur: 9, shadowColor: 'rgba(233,84,107,.42)' } }
       }]
     }, true)
   }
@@ -218,10 +240,10 @@ function postsChart () {
   var postsChartEmpty = document.getElementById('posts-chart-empty')
   var postsChartRangeChanging = false
   var postsChartRoot = document.documentElement
-  var postsChartDark = postsChartRoot.hasAttribute('data-theme')
+  var postsChartDark = postsChartRoot.getAttribute('data-theme') === 'dark'
   var postsChartTextColor = window.getComputedStyle(document.body).color || (postsChartDark ? '#f5f5f5' : '#333')
   var postsChartAxisColor = window.getComputedStyle(postsChartRoot).getPropertyValue('--grey-4').trim() || postsChartTextColor
-  var postsChartSplitColor = postsChartDark ? 'rgba(255,255,255,.08)' : 'rgba(81,72,99,.09)'
+  var postsChartSplitColor = postsChartDark ? 'rgba(255,220,212,.085)' : 'rgba(148,104,93,.1)'
 
   function postsChartVisibleIndexes () {
     var zoom = (postsChart.getOption().dataZoom || [])[0] || {}
@@ -262,12 +284,12 @@ function postsChart () {
       borderWidth: 0,
       padding: [9, 12],
       textStyle: { color: '#fff' },
-      axisPointer: { type: 'line', lineStyle: { color: 'rgba(171, 102, 255, .5)', width: 1 } },
+      axisPointer: { type: 'line', lineStyle: { color: 'rgba(233, 84, 107, .48)', width: 1 } },
       formatter: function (params) {
         var point = params[0]
         return '<div style="font-size:12px;color:#c9c2d4">' + point.axisValue + '</div>' +
-          '<div style="margin-top:3px"><span style="display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#ab66ff"></span>' +
-          '<strong style="color:#e2c6ff">' + point.value + '</strong> 篇文章</div>'
+          '<div style="margin-top:3px"><span style="display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#e9546b"></span>' +
+          '<strong style="color:#ffb8ae">' + point.value + '</strong> 篇文章</div>'
       }
     },
     grid: { top: 28, left: 48, right: 24, bottom: 68 },
@@ -299,10 +321,10 @@ function postsChart () {
       height: 18,
       bottom: 16,
       borderColor: 'transparent',
-      backgroundColor: postsChartDark ? 'rgba(255,255,255,.06)' : 'rgba(86,70,112,.06)',
-      fillerColor: 'rgba(171, 102, 255, .18)',
-      handleStyle: { color: '#ab66ff', borderColor: '#d8b9ff' },
-      moveHandleStyle: { color: 'rgba(171, 102, 255, .4)' },
+      backgroundColor: postsChartDark ? 'rgba(255,255,255,.045)' : 'rgba(148,104,93,.055)',
+      fillerColor: 'rgba(233, 84, 107, .16)',
+      handleStyle: { color: '#e9546b', borderColor: '#f3b0a8' },
+      moveHandleStyle: { color: 'rgba(233, 84, 107, .34)' },
       textStyle: { color: postsChartTextColor }
     }],
     series: [{
@@ -312,16 +334,16 @@ function postsChart () {
       showSymbol: false,
       symbolSize: 7,
       data: postsChartValues,
-      lineStyle: { width: 2.5, color: '#9a78ef' },
-      itemStyle: { color: '#ab66ff' },
+      lineStyle: { width: 2.5, color: '#e26d78' },
+      itemStyle: { color: '#e9546b' },
       areaStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(171,102,255,.38)' }, { offset: 1, color: 'rgba(104,184,241,.025)' }])
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(233,84,107,.26)' }, { offset: 1, color: 'rgba(236,140,105,.02)' }])
       },
       emphasis: { focus: 'series' },
       markLine: {
         symbol: ['none', 'none'],
         label: { color: postsChartTextColor, formatter: '平均 {c}' },
-        lineStyle: { color: 'rgba(171,102,255,.35)', type: 'dashed' },
+        lineStyle: { color: 'rgba(236,140,105,.42)', type: 'dashed' },
         data: [{ type: 'average', name: '平均值' }]
       }
     }]
@@ -366,9 +388,9 @@ function creationClockChart () {
   var creationClockData = ${jsonForScript(clockData)}
   var creationClockWeekdays = ${jsonForScript(weekdays)}
   var creationClockRoot = document.documentElement
-  var creationClockDark = creationClockRoot.hasAttribute('data-theme')
+  var creationClockDark = creationClockRoot.getAttribute('data-theme') === 'dark'
   var creationClockTextColor = window.getComputedStyle(document.body).color || (creationClockDark ? '#f5f5f5' : '#333')
-  var creationClockAxisColor = creationClockDark ? 'rgba(255,255,255,.13)' : 'rgba(86,70,112,.12)'
+  var creationClockAxisColor = creationClockDark ? 'rgba(255,220,212,.12)' : 'rgba(148,104,93,.12)'
   creationClockChart.setOption({
     animationDuration: 1000,
     animationEasing: 'cubicOut',
@@ -383,7 +405,7 @@ function creationClockChart () {
         var detail = (params.data.breakdown || []).map(function (count, index) {
           return count > 0 ? '<span style="color:#c9c2d4">' + creationClockWeekdays[index] + '</span> ' + count + ' 篇' : ''
         }).filter(Boolean).join('<br>')
-        return '<strong style="color:#f0d7ff">' + params.name + '</strong>　<strong style="color:#9ecfff">' + params.value + '</strong> 篇文章' +
+        return '<strong style="color:#ffd1c9">' + params.name + '</strong>　<strong style="color:#ffad9f">' + params.value + '</strong> 篇文章' +
           (detail ? '<div style="margin-top:6px;line-height:1.65">' + detail + '</div>' : '<div style="margin-top:5px;color:#aaa">暂无发布记录</div>')
       }
     },
@@ -418,12 +440,12 @@ function creationClockChart () {
       roundCap: true,
       barWidth: '68%',
       itemStyle: {
-        color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: '#64b8ef' }, { offset: .52, color: '#9b7cf1' }, { offset: 1, color: '#df76bd' }]),
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: '#ecaa72' }, { offset: .52, color: '#ec8c69' }, { offset: 1, color: '#e9546b' }]),
         opacity: .86,
         shadowBlur: 7,
-        shadowColor: 'rgba(171,102,255,.25)'
+        shadowColor: 'rgba(233,84,107,.2)'
       },
-      emphasis: { itemStyle: { opacity: 1, shadowBlur: 15, shadowColor: 'rgba(171,102,255,.5)' } }
+      emphasis: { itemStyle: { opacity: 1, shadowBlur: 15, shadowColor: 'rgba(233,84,107,.38)' } }
     }],
     graphic: [{
       type: 'group',
@@ -439,7 +461,7 @@ function creationClockChart () {
 }
 
 function articleSizeChart () {
-  const palette = ['#ab66ff', '#668cf2', '#54b8d7', '#55c4a8', '#e7a85f', '#e476ad', '#9279dc', '#6d9ccf']
+  const palette = ['#e9546b', '#ec8c69', '#dfa56c', '#d97893', '#c98672', '#ed7ead', '#b97970', '#e7b07c']
   const colorMap = new Map()
   const data = []
 
@@ -465,10 +487,10 @@ function articleSizeChart () {
   var articleSizeCategories = ${jsonForScript(categories)}
   var articleSizeRootPath = ${jsonForScript(hexo.config.root || '/')}
   var articleSizeRoot = document.documentElement
-  var articleSizeDark = articleSizeRoot.hasAttribute('data-theme')
+  var articleSizeDark = articleSizeRoot.getAttribute('data-theme') === 'dark'
   var articleSizeTextColor = window.getComputedStyle(document.body).color || (articleSizeDark ? '#f5f5f5' : '#333')
   var articleSizeAxisColor = window.getComputedStyle(articleSizeRoot).getPropertyValue('--grey-4').trim() || articleSizeTextColor
-  var articleSizeSplitColor = articleSizeDark ? 'rgba(255,255,255,.08)' : 'rgba(81,72,99,.09)'
+  var articleSizeSplitColor = articleSizeDark ? 'rgba(255,220,212,.085)' : 'rgba(148,104,93,.1)'
   var articleSizeSelectedCategories = null
   var articleSizeYAxisFrame = null
   var articleSizeTimeValues = articleSizeData.map(function (item) { return new Date(item.value[0]).getTime() }).filter(Number.isFinite)
@@ -523,9 +545,9 @@ function articleSizeChart () {
       textStyle: { color: '#fff' },
       formatter: function (params) {
         var value = params.value
-        return '<strong style="color:#f0d7ff">' + value[2] + '</strong><br>' +
+        return '<strong style="color:#ffd1c9">' + value[2] + '</strong><br>' +
           '<span style="color:#c9c2d4">' + value[0] + ' · ' + value[3] + '</span><br>' +
-          '<span style="color:#d9d2e3">文章体量：</span><strong style="color:#9ecfff">' + Number(value[1]).toLocaleString() + '</strong> 字'
+          '<span style="color:#d9d2e3">文章体量：</span><strong style="color:#ffad9f">' + Number(value[1]).toLocaleString() + '</strong> 字'
       }
     },
     legend: {
@@ -568,10 +590,10 @@ function articleSizeChart () {
       height: 18,
       bottom: 16,
       borderColor: 'transparent',
-      backgroundColor: articleSizeDark ? 'rgba(255,255,255,.06)' : 'rgba(86,70,112,.06)',
-      fillerColor: 'rgba(171, 102, 255, .18)',
-      handleStyle: { color: '#ab66ff', borderColor: '#d8b9ff' },
-      moveHandleStyle: { color: 'rgba(171, 102, 255, .4)' },
+      backgroundColor: articleSizeDark ? 'rgba(255,255,255,.045)' : 'rgba(148,104,93,.055)',
+      fillerColor: 'rgba(233, 84, 107, .16)',
+      handleStyle: { color: '#e9546b', borderColor: '#f3b0a8' },
+      moveHandleStyle: { color: 'rgba(233, 84, 107, .34)' },
       textStyle: { color: articleSizeTextColor }
     }],
     series: articleSizeCategories.map(function (category) {
@@ -627,22 +649,22 @@ function tagsChart (length) {
   var tagsChartValues = ${jsonForScript(selected.map(function (tag) { return tag.value }))}
   var tagsChartRootPath = ${jsonForScript(hexo.config.root || '/')}
   var tagsChartRoot = document.documentElement
-  var tagsChartDark = tagsChartRoot.hasAttribute('data-theme')
+  var tagsChartDark = tagsChartRoot.getAttribute('data-theme') === 'dark'
   var tagsChartTextColor = window.getComputedStyle(document.body).color || (tagsChartDark ? '#f5f5f5' : '#333')
-  var tagsChartSplitColor = tagsChartDark ? 'rgba(255,255,255,.08)' : 'rgba(81,72,99,.09)'
-  var tagsChartTrackColor = tagsChartDark ? 'rgba(255,255,255,.055)' : 'rgba(108,82,142,.055)'
+  var tagsChartSplitColor = tagsChartDark ? 'rgba(255,220,212,.085)' : 'rgba(148,104,93,.1)'
+  var tagsChartTrackColor = tagsChartDark ? 'rgba(255,255,255,.045)' : 'rgba(148,104,93,.05)'
   tagsChart.setOption({
     animationDuration: 850,
     animationEasing: 'cubicOut',
     textStyle: { color: tagsChartTextColor },
     tooltip: {
       trigger: 'axis',
-      axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(171, 102, 255, .06)' } },
+      axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(233, 84, 107, .055)' } },
       backgroundColor: 'rgba(36, 31, 48, .94)',
       borderWidth: 0,
       padding: [8, 11],
       textStyle: { color: '#fff' },
-      formatter: function (params) { return '<span style="color:#d7c2e8">' + params[0].name + '</span>　<strong style="color:#f0c9ff">' + params[0].value + '</strong> 篇' }
+      formatter: function (params) { return '<span style="color:#ead0cc">' + params[0].name + '</span>　<strong style="color:#ffb5aa">' + params[0].value + '</strong> 篇' }
     },
     grid: { top: 22, left: 112, right: 42, bottom: 24 },
     xAxis: {
@@ -662,7 +684,7 @@ function tagsChart (length) {
         color: tagsChartTextColor,
         margin: 12,
         formatter: function (value, index) { return '{rank|' + String(index + 1).padStart(2, '0') + '}  {name|' + value + '}' },
-        rich: { rank: { color: '#ab66ff', fontSize: 10, fontWeight: 600 }, name: { color: tagsChartTextColor, fontSize: 11 } }
+        rich: { rank: { color: '#e9546b', fontSize: 10, fontWeight: 600 }, name: { color: tagsChartTextColor, fontSize: 11 } }
       },
       data: tagsChartNames
     },
@@ -677,13 +699,13 @@ function tagsChart (length) {
       label: { show: true, position: 'right', distance: 7, color: tagsChartTextColor, fontSize: 10, formatter: '{c}' },
       itemStyle: {
         borderRadius: [0, 8, 8, 0],
-        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#6bbcf2' }, { offset: .52, color: '#9b7cf1' }, { offset: 1, color: '#df76bd' }])
+        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#ecaa72' }, { offset: .52, color: '#ec8c69' }, { offset: 1, color: '#e9546b' }])
       },
-      emphasis: { focus: 'series', itemStyle: { shadowBlur: 12, shadowColor: 'rgba(171, 102, 255, .38)' } },
+      emphasis: { focus: 'series', itemStyle: { shadowBlur: 12, shadowColor: 'rgba(233, 84, 107, .3)' } },
       markLine: {
         symbol: ['none', 'none'],
         label: { color: tagsChartTextColor, formatter: '平均 {c}' },
-        lineStyle: { color: 'rgba(171, 102, 255, .35)', type: 'dashed' },
+        lineStyle: { color: 'rgba(236, 140, 105, .42)', type: 'dashed' },
         data: [{ name: '平均值', type: 'average' }]
       }
     }]
@@ -698,10 +720,18 @@ function tagsChart (length) {
 }
 
 function categoriesChart () {
-  const categories = []
-  hexo.locals.get('categories').forEach(function (category) {
-    categories.push({ name: String(category.name), value: Number(category.length) || 0 })
+  const categoryMap = new Map()
+  hexo.locals.get('posts').forEach(function (post) {
+    leafCategoryItems(post.categories).forEach(function (category) {
+      const path = categoryPath(category)
+      const key = path || String(category.name)
+      if (!categoryMap.has(key)) {
+        categoryMap.set(key, { name: String(category.name), value: 0, path: path })
+      }
+      categoryMap.get(key).value += 1
+    })
   })
+  const categories = Array.from(categoryMap.values())
   categories.sort(function (a, b) { return b.value - a.value })
   const total = categories.reduce(function (sum, category) { return sum + category.value }, 0)
 
@@ -711,13 +741,12 @@ function categoriesChart () {
   var categoriesChartData = ${jsonForScript(categories)}
   var categoriesChartRootPath = ${jsonForScript(hexo.config.root || '/')}
   var categoriesChartRoot = document.documentElement
-  var categoriesChartDark = categoriesChartRoot.hasAttribute('data-theme')
+  var categoriesChartDark = categoriesChartRoot.getAttribute('data-theme') === 'dark'
   var categoriesChartTextColor = window.getComputedStyle(document.body).color || (categoriesChartDark ? '#f5f5f5' : '#333')
-  var categoriesChartBorderColor = window.getComputedStyle(categoriesChartRoot).getPropertyValue('--grey-0').trim() || (categoriesChartDark ? '#252733' : '#fff')
   categoriesChart.setOption({
     animationDuration: 900,
     animationEasing: 'cubicOut',
-    color: ['#ab66ff', '#7d8cf3', '#62b5e8', '#58c6b8', '#f0b36c', '#ec86b2', '#bf83e5', '#7181cf'],
+    color: ['#e9546b', '#ec8c69', '#dfa56c', '#d97893', '#c98672', '#ed7ead', '#b97970', '#e7b07c'],
     textStyle: { color: categoriesChartTextColor },
     title: {
       text: ${jsonForScript(String(total))},
@@ -736,7 +765,7 @@ function categoriesChart () {
       textStyle: { color: '#fff' },
       formatter: function (params) {
         return '<span style="display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;background:' + params.color + '"></span>' +
-          '<span style="color:#d9d2e3">' + params.name + '</span><br><strong style="color:#e5caff">' + params.value + '</strong> 篇　' + params.percent + '%'
+          '<span style="color:#ead0cc">' + params.name + '</span><br><strong style="color:#ffb5aa">' + params.value + '</strong> 篇　' + params.percent + '%'
       }
     },
     series: [{
@@ -746,17 +775,19 @@ function categoriesChart () {
       center: ['50%', '43%'],
       avoidLabelOverlap: true,
       minAngle: 4,
+      padAngle: 2,
       label: { color: categoriesChartTextColor, fontSize: 10, lineHeight: 15, formatter: function (params) { return params.name + '\\n' + params.value + ' 篇' } },
-      labelLine: { length: 12, length2: 8, lineStyle: { color: 'rgba(171, 102, 255, .3)' } },
+      labelLine: { length: 12, length2: 8, lineStyle: { color: 'rgba(236, 140, 105, .38)' } },
       data: categoriesChartData,
-      itemStyle: { borderColor: categoriesChartBorderColor, borderWidth: 3, borderRadius: 6 },
-      emphasis: { scaleSize: 8, itemStyle: { shadowBlur: 16, shadowOffsetX: 0, shadowColor: 'rgba(171, 102, 255, .35)' }, label: { fontWeight: 600 } }
+      itemStyle: { borderWidth: 0, borderRadius: 6 },
+      emphasis: { scaleSize: 8, itemStyle: { shadowBlur: 16, shadowOffsetX: 0, shadowColor: 'rgba(233, 84, 107, .28)' }, label: { fontWeight: 600 } }
     }]
   })
   categoriesChart.on('click', 'series', function (event) {
+    if (!event.data || !event.data.path) return
     var root = String(categoriesChartRootPath || '/')
     if (root.charAt(root.length - 1) !== '/') root += '/'
-    window.location.href = root + 'categories/' + encodeURIComponent(event.name) + '/'
+    window.location.href = root + String(event.data.path).replace(/^\\/+/, '')
   })
   window.ShokaStatisticsCharts.register(categoriesChart, function () { categoriesChart.resize() })
   </script>`
@@ -765,13 +796,18 @@ function categoriesChart () {
 function categoryTagSunburstChart () {
   const relationMap = new Map()
   hexo.locals.get('posts').forEach(function (post) {
-    const categories = collectionNames(post.categories)
+    const categories = leafCategoryItems(post.categories)
     const tags = collectionNames(post.tags)
-    const postCategories = categories.length ? categories : ['未分类']
+    const postCategories = categories.length ? categories : [{ name: '未分类', path: '' }]
     const postTags = tags.length ? tags : ['无标签']
     postCategories.forEach(function (category) {
-      if (!relationMap.has(category)) relationMap.set(category, new Map())
-      const tagMap = relationMap.get(category)
+      const categoryName = String(category.name)
+      const path = category.path ? categoryPath(category) : ''
+      const key = path || categoryName
+      if (!relationMap.has(key)) {
+        relationMap.set(key, { name: categoryName, path: path, tags: new Map() })
+      }
+      const tagMap = relationMap.get(key).tags
       postTags.forEach(function (tag) {
         tagMap.set(tag, (tagMap.get(tag) || 0) + 1)
       })
@@ -779,14 +815,15 @@ function categoryTagSunburstChart () {
   })
 
   const data = Array.from(relationMap, function (categoryEntry) {
-    const category = categoryEntry[0]
-    const children = Array.from(categoryEntry[1], function (tagEntry) {
+    const category = categoryEntry[1]
+    const children = Array.from(category.tags, function (tagEntry) {
       return { name: tagEntry[0], value: tagEntry[1], linkType: tagEntry[0] === '无标签' ? '' : 'tag' }
     }).sort(function (a, b) { return b.value - a.value })
     return {
-      name: category,
+      name: category.name,
       value: children.reduce(function (sum, child) { return sum + child.value }, 0),
-      linkType: category === '未分类' ? '' : 'category',
+      linkType: category.path ? 'category' : '',
+      path: category.path,
       children: children
     }
   }).sort(function (a, b) { return b.value - a.value })
@@ -797,13 +834,13 @@ function categoryTagSunburstChart () {
   var categoryTagSunburstData = ${jsonForScript(data)}
   var categoryTagSunburstRootPath = ${jsonForScript(hexo.config.root || '/')}
   var categoryTagSunburstRoot = document.documentElement
-  var categoryTagSunburstDark = categoryTagSunburstRoot.hasAttribute('data-theme')
+  var categoryTagSunburstDark = categoryTagSunburstRoot.getAttribute('data-theme') === 'dark'
   var categoryTagSunburstTextColor = window.getComputedStyle(document.body).color || (categoryTagSunburstDark ? '#f5f5f5' : '#333')
-  var categoryTagSunburstBorderColor = window.getComputedStyle(categoryTagSunburstRoot).getPropertyValue('--grey-0').trim() || (categoryTagSunburstDark ? '#252733' : '#fff')
+  var categoryTagSunburstGapColor = categoryTagSunburstDark ? '#252733' : '#fff'
   categoryTagSunburstChart.setOption({
     animationDuration: 1050,
     animationEasing: 'cubicOut',
-    color: ['#ab66ff', '#7189ef', '#58b3df', '#54c2ad', '#e9ad62', '#e677ae', '#a77adf', '#6e9bd0'],
+    color: ['#e9546b', '#ec8c69', '#dfa56c', '#d97893', '#c98672', '#ed7ead', '#b97970', '#e7b07c'],
     textStyle: { color: categoryTagSunburstTextColor },
     tooltip: {
       trigger: 'item',
@@ -813,7 +850,7 @@ function categoryTagSunburstChart () {
       textStyle: { color: '#fff' },
       formatter: function (params) {
         var path = (params.treePathInfo || []).slice(1).map(function (item) { return item.name }).join(' / ')
-        return '<span style="color:#ddd3e8">' + path + '</span><br><strong style="color:#edcfff">' + params.value + '</strong> 次内容关联'
+        return '<span style="color:#ead0cc">' + path + '</span><br><strong style="color:#ffb5aa">' + params.value + '</strong> 次内容关联'
       }
     },
     series: [{
@@ -826,18 +863,18 @@ function categoryTagSunburstChart () {
       nodeClick: false,
       minAngle: 3,
       emphasis: { focus: 'ancestor' },
-      itemStyle: { borderColor: categoryTagSunburstBorderColor, borderWidth: 2, borderRadius: 5 },
+      itemStyle: { borderColor: categoryTagSunburstGapColor, borderWidth: 2, borderRadius: 5 },
       label: { color: '#fff', textBorderColor: 'rgba(38, 27, 52, .72)', textBorderWidth: 2 },
       levels: [{}, {
         r0: '18%',
         r: '52%',
         label: { rotate: 'tangential', fontSize: 11, fontWeight: 600, color: '#fff', padding: [2, 3], textBorderColor: 'rgba(38,27,52,.6)', textBorderWidth: 2, formatter: function (params) { return params.value > 1 ? params.name : '' } },
-        itemStyle: { borderWidth: 4, borderRadius: 6 }
+        itemStyle: { borderColor: categoryTagSunburstGapColor, borderWidth: 3, borderRadius: 6 }
       }, {
         r0: '54%',
         r: '90%',
         label: { rotate: 'radial', fontSize: 10, fontWeight: 600, color: '#fff', padding: [1, 2], textBorderColor: 'rgba(38,27,52,.78)', textBorderWidth: 2, textShadowColor: 'rgba(20,14,30,.45)', textShadowBlur: 3, formatter: function (params) { return params.value > 2 ? params.name : '' } },
-        itemStyle: { borderWidth: 3, borderRadius: 6, opacity: .9 }
+        itemStyle: { borderColor: categoryTagSunburstGapColor, borderWidth: 2, borderRadius: 6, opacity: .9 }
       }]
     }],
     graphic: [{
@@ -845,16 +882,19 @@ function categoryTagSunburstChart () {
       left: 'center',
       top: 'middle',
       silent: true,
-      children: [{ type: 'text', style: { text: '分类', fill: categoryTagSunburstDark ? '#e4dff0' : '#554b66', font: '600 13px sans-serif', textAlign: 'center' } },
-        { type: 'text', top: 17, style: { text: '标签', fill: categoryTagSunburstDark ? '#e4dff0' : '#554b66', opacity: .62, font: '9px sans-serif', textAlign: 'center' } }]
+      children: [{ type: 'text', style: { text: '分类', fill: categoryTagSunburstDark ? '#f0d7d2' : '#6d4b45', font: '600 13px sans-serif', textAlign: 'center' } },
+        { type: 'text', top: 17, style: { text: '标签', fill: categoryTagSunburstDark ? '#f0d7d2' : '#6d4b45', opacity: .62, font: '9px sans-serif', textAlign: 'center' } }]
     }]
   })
   categoryTagSunburstChart.on('click', 'series', function (event) {
     if (!event.data || !event.data.linkType) return
-    var base = event.data.linkType === 'category' ? 'categories/' : 'tags/'
     var root = String(categoryTagSunburstRootPath || '/')
     if (root.charAt(root.length - 1) !== '/') root += '/'
-    window.location.href = root + base + encodeURIComponent(event.name) + '/'
+    if (event.data.linkType === 'category') {
+      window.location.href = root + String(event.data.path).replace(/^\\/+/, '')
+      return
+    }
+    window.location.href = root + 'tags/' + encodeURIComponent(event.name) + '/'
   })
   window.ShokaStatisticsCharts.register(categoryTagSunburstChart, function () { categoryTagSunburstChart.resize() })
   </script>`
