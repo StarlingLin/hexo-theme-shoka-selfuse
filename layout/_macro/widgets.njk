@@ -28,7 +28,8 @@
   <ul
     id="waline-recent-comments"
     class="waline-recent-comments"
-    data-count="{{ theme.widgets.recent_comments_count or 5 }}">
+    data-count="{{ theme.widgets.recent_comments_count or 5 }}"
+    data-exclude-nicks="{{ (theme.widgets.recent_comments_exclude_nicks or []) | join('|') }}">
   </ul>
 </div>
 {%- endif %}

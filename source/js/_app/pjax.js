@@ -62,8 +62,17 @@ const loadRecentComments = function () {
     return;
 
   var count = parseInt(list.attr('data-count') || 5);
+  var excludedNicks = String(list.attr('data-exclude-nicks') || '')
+    .split('|')
+    .map(function(nick) {
+      return nick.trim().toLowerCase();
+    })
+    .filter(Boolean);
+  var requestCount = excludedNicks.length
+    ? Math.min(Math.max(count * 5, count), 100)
+    : count;
   var serverURL = CONFIG.waline.serverURL.replace(/\/+$/, '');
-  var requestURL = serverURL + '/api/comment?type=recent&count=' + count + '&lang=zh-CN';
+  var requestURL = serverURL + '/api/comment?type=recent&count=' + requestCount + '&lang=zh-CN';
 
   list.innerHTML = '<li class="waline-recent-comment-status">加载中...</li>';
 
@@ -82,6 +91,13 @@ const loadRecentComments = function () {
       var comments = Array.isArray(result)
         ? result
         : (Array.isArray(result.data) ? result.data : []);
+
+      comments = comments
+        .filter(function(item) {
+          var nick = String(item.nick || '').trim().toLowerCase();
+          return excludedNicks.indexOf(nick) === -1;
+        })
+        .slice(0, count);
 
       list.innerHTML = '';
 
@@ -227,6 +243,27 @@ const siteRefresh = function (reload) {
 }
 
 const siteInit = function () {
+
+  const redirectLegacyComments = function () {
+    if(!CONFIG.comment_redirect || window.location.hash.toLowerCase() !== '#comments')
+      return false
+
+    const normalizePath = function (path) {
+      return '/' + String(path || '').replace(/^\/+|\/+$/g, '')
+    }
+    const rootPath = new URL(CONFIG.root || '/', window.location.origin).pathname
+
+    if(normalizePath(window.location.pathname) !== normalizePath(rootPath))
+      return false
+
+    window.location.replace(CONFIG.comment_redirect)
+    return true
+  }
+
+  if(redirectLegacyComments())
+    return
+
+  window.addEventListener('hashchange', redirectLegacyComments)
 
   domInit()
   contextMenuInit()

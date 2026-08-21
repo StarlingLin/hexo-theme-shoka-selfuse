@@ -55,3 +55,83 @@
   }
 
 }
+
+.waline-recent-comments-widget {
+  min-width: 0;
+
+  .waline-recent-comments {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .waline-recent-comment-item {
+    position: relative;
+    margin: 0;
+    padding: .75rem 0;
+    border-bottom: .0625rem dashed var(--grey-4);
+    list-style: none;
+
+    &::before,
+    &::after {
+      display: none;
+      content: none;
+    }
+  }
+
+  .waline-recent-comment-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      .waline-recent-comment-nick,
+      .waline-recent-comment-content {
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .waline-recent-comment-header {
+    display: flex;
+    align-items: baseline;
+    min-width: 0;
+    margin-bottom: .25rem;
+    column-gap: .5rem;
+    line-height: 1.4;
+  }
+
+  .waline-recent-comment-nick {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--color-aqua);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .waline-recent-comment-time {
+    flex: 0 0 auto;
+    color: var(--grey-5);
+    font-size: .75rem;
+    white-space: nowrap;
+  }
+
+  .waline-recent-comment-content {
+    display: block;
+    overflow: hidden;
+    color: var(--grey-6);
+    font-size: .875rem;
+    line-height: 1.6;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .waline-recent-comment-status {
+    padding: 1rem 0;
+    color: var(--grey-5);
+    list-style: none;
+  }
+}

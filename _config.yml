@@ -29,6 +29,9 @@ darkmode: false
 # if `false`, automatic positioning will be turned off
 auto_scroll: true
 
+# Redirect the legacy comments anchor on the home page to the standalone comment site
+comment_redirect: https://comment.starlinglin.top/
+
 # Whether to show the loading cat
 loader:
   start: true # When entering the page
@@ -148,6 +151,9 @@ widgets:
   # if true, will show recent comments
   recent_comments: true
   recent_comments_count: 8
+  # Exact nicknames hidden from the recent-comments widget (for example, the site owner)
+  recent_comments_exclude_nicks:
+    - Starling
 
 footer:
   # Specify the date when the site was setup. If not defined, current year will be used.
@@ -222,6 +228,11 @@ waline:
   login: enable
   # Keep the imported Counter paths in sync with Shoka's LOCAL.path.
   pageview: true
+  emoji:
+    - https://fastly.jsdelivr.net/gh/StarlingLin/emojis-waline@v1.1.0/86/
+    - https://fastly.jsdelivr.net/gh/StarlingLin/emojis-waline@v1.1.0/rj/
+    - https://fastly.jsdelivr.net/gh/StarlingLin/emojis-waline@v1.1.0/sb/
+    - https://fastly.jsdelivr.net/gh/StarlingLin/emojis-waline@v1.1.0/sw/
 
 # bgm
 audio:

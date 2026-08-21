@@ -32,6 +32,7 @@ hexo.extend.generator.register('script', function(locals){
     },
     darkmode: theme.darkmode,
     auto_scroll: theme.auto_scroll,
+    comment_redirect: theme.comment_redirect,
     js: {
       waline: theme.vendors.js.waline,
       chart: theme.vendors.js.chart,
